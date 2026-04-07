@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cursed-domains",
+  "compatibility_date": "2026-04-07",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "fornoreason"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
