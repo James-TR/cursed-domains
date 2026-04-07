@@ -12,5 +12,17 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "routes": [
+    { "pattern": "fornoreason.au", "custom_domain": true },
+    { "pattern": "www.fornoreason.au", "custom_domain": true },
+    { "pattern": "fornoreason.net.au", "custom_domain": true },
+    { "pattern": "www.fornoreason.net.au", "custom_domain": true },
+    { "pattern": "realhost.name", "custom_domain": true },
+    { "pattern": "www.realhost.name", "custom_domain": true },
+    { "pattern": "realhostna.me", "custom_domain": true },
+    { "pattern": "www.realhostna.me", "custom_domain": true },
+    { "pattern": "youhacked.me", "custom_domain": true },
+    { "pattern": "www.youhacked.me", "custom_domain": true }
   ]
 }
