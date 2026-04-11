@@ -1,0 +1,96 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0d0d0d;
+  color: #33ff33;
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  cursor: text;
+}
+
+.terminal {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+
+.titlebar {
+  background: #222;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.dot.red    { background: #ff5f57; }
+.dot.yellow { background: #febc2e; }
+.dot.green  { background: #28c840; }
+
+.titlebar span {
+  margin-left: auto;
+  margin-right: auto;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.body {
+  padding: 1.5rem;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+  line-height: 2;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.line { white-space: pre-wrap; word-break: break-all; }
+.prompt-color { color: #666; }
+.cmd-color    { color: #fff; }
+.output-color { color: #33ff33; }
+.err-color    { color: #ff5f57; }
+
+.input-line {
+  display: flex;
+  align-items: baseline;
+}
+
+.input-line .ghost {
+  color: #fff;
+  flex: 1;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  background: #33ff33;
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+  flex-shrink: 0;
+}
+
+#hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}

@@ -5,100 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>realhost.name</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #0d0d0d;
-      color: #33ff33;
-      font-family: monospace;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      padding: 2rem;
-    }
-
-    .terminal {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 6px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.8);
-      overflow: hidden;
-    }
-
-    .titlebar {
-      background: #222;
-      padding: 0.6rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-bottom: 1px solid #333;
-    }
-
-    .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-    .dot.red    { background: #ff5f57; }
-    .dot.yellow { background: #febc2e; }
-    .dot.green  { background: #28c840; }
-
-    .titlebar span {
-      margin-left: auto;
-      margin-right: auto;
-      color: #666;
-      font-size: 0.8rem;
-    }
-
-    .body {
-      padding: 1.5rem;
-      font-size: clamp(0.8rem, 2.5vw, 1rem);
-      line-height: 2;
-    }
-
-    .prompt { color: #666; }
-    .cmd    { color: #fff; }
-    .output { color: #33ff33; }
-    .cursor {
-      display: inline-block;
-      width: 0.6em;
-      height: 1.1em;
-      background: #33ff33;
-      vertical-align: text-bottom;
-      animation: blink 1s step-end infinite;
-    }
-
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="terminal">
+  <div class="terminal" id="terminal">
     <div class="titlebar">
       <div class="dot red"></div>
       <div class="dot yellow"></div>
       <div class="dot green"></div>
       <span>bash</span>
     </div>
-    <div class="body">
-      <div><span class="prompt">user@<span class="hostname"></span>:~$</span> <span class="cmd">hostname</span></div>
-      <div class="output hostname"></div>
-      <div><span class="prompt">user@<span class="hostname"></span>:~$</span> <span class="cmd">hostname --fqdn</span></div>
-      <div class="output hostname"></div>
-      <div><span class="prompt">user@<span class="hostname"></span>:~$</span> <span class="cmd">hostname -i</span></div>
-      <div class="output">yes</div>
-      <div><span class="prompt">user@<span class="hostname"></span>:~$</span> <span class="cursor"></span></div>
-    </div>
+    <div class="body" id="output"></div>
   </div>
-  <script>
-    const host = window.location.hostname;
-    document.title = host;
-    document.querySelectorAll('.hostname').forEach(el => el.textContent = host);
-  </script>
+  <input id="hidden-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+  <script src="./script.js"></script>
 </body>
 </html>

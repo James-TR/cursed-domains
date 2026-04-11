@@ -114,7 +114,7 @@ function animate(timeStamp) {
     const deltaTime = timeStamp - lastTime;
     lastTime = timeStamp;
     if (timer > nextFrame) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = rainbow ? makeGradient() : '#0aff0a';
         ctx.font = effect.fontSize + 'px monospace';
