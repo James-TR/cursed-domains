@@ -142,6 +142,27 @@ function run(raw) {
   renderInputLine();
 }
 
+document.getElementById('btn-close').addEventListener('click', e => {
+  e.stopPropagation();
+  run('exit');
+});
+
+document.getElementById('btn-minimise').addEventListener('click', e => {
+  e.stopPropagation();
+  const terminal = document.getElementById('terminal');
+  terminal.classList.add('minimised');
+  setTimeout(() => terminal.classList.remove('minimised'), 1200);
+});
+
+document.getElementById('btn-maximise').addEventListener('click', e => {
+  e.stopPropagation();
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  } else {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+});
+
 document.addEventListener('click', () => input.focus());
 input.focus();
 
@@ -183,7 +204,7 @@ input.addEventListener('input', () => {
   renderInputLine(input.value);
 });
 
-appendLine(`<span class="output-color">Last login: ${new Date().toUTCString()} on ttys000</span>`);
+appendLine(`<span class="output-color">Last login: ${new Date().toLocaleString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short', hour12: false })} on ttys000</span>`);
 appendLine('');
 appendLine(`<span class="output-color">Welcome to ${shortHost}.</span>`);
 appendLine(`<span class="prompt-color">Try: <span class="cmd-color">hostname</span>, <span class="cmd-color">whoami</span>, <span class="cmd-color">ls</span>, <span class="cmd-color">cat README</span>. Type <span class="cmd-color">help</span> for more.</span>`);

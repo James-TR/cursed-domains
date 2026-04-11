@@ -35,10 +35,22 @@ body {
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  cursor: pointer;
 }
 .dot.red    { background: #ff5f57; }
 .dot.yellow { background: #febc2e; }
 .dot.green  { background: #28c840; }
+
+.body {
+  transition: max-height 0.25s ease, padding 0.25s ease;
+}
+
+.terminal.minimised .body {
+  max-height: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+}
 
 .titlebar span {
   margin-left: auto;
@@ -84,7 +96,9 @@ body {
 }
 
 #hidden-input {
-  position: absolute;
+  position: fixed;
+  top: -100px;
+  left: -100px;
   opacity: 0;
   pointer-events: none;
   width: 1px;
