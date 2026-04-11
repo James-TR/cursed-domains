@@ -5,56 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Loading reason...</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      background: #000;
-      color: #fff;
-      font-family: monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      gap: 2rem;
-    }
-
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid #333;
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .message {
-      font-size: clamp(1rem, 3vw, 1.5rem);
-      color: #aaa;
-      letter-spacing: 0.05em;
-    }
-
-    .dots::after {
-      content: '';
-      animation: dots 1.5s steps(4, end) infinite;
-    }
-
-    @keyframes dots {
-      0%   { content: ''; }
-      25%  { content: '.'; }
-      50%  { content: '..'; }
-      75%  { content: '...'; }
-      100% { content: ''; }
-    }
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="spinner"></div>
-  <p class="message">loading reason<span class="dots"></span></p>
+  <div class="spinner" id="spinner"></div>
+  <p class="message" id="message">loading reason<span class="dots"></span></p>
+
+  <div class="reason" id="reason">
+    <p class="reason-label">reason</p>
+    <p class="reason-value">no</p>
+  </div>
+
+  <script src="./script.js"></script>
 </body>
 </html>
