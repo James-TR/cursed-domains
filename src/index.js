@@ -16,6 +16,11 @@ export default {
     const url = new URL(request.url);
     const site = ROUTES[url.hostname];
 
+    if (url.pathname === '/cdn-cgi/trace') {
+      const ip = request.headers.get('CF-Connecting-IP') ?? '';
+      return new Response(`ip=${ip}\n`);
+    }
+
     if (!site) {
       return new Response("Not found", { status: 404 });
     }

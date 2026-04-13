@@ -7,13 +7,58 @@ const shortHost = host.replace(/^www\./, '');
 
 let history = [];
 let historyIndex = -1;
+let userIP = null;
 
-const FILES = {
-  'README':        `This is ${shortHost}.\nThe real hostname is ${shortHost}.\nYou're welcome.`,
-  'hostname.conf': `HOSTNAME=${shortHost}\nFQDN=${shortHost}\n`,
-  'is_this_real':  'yes',
-  '.bash_history': `hostname\nhostname --fqdn\nhostname -i\nwhoami\nls\n`,
-};
+function buildIpAddr(family) {
+  const ip = userIP || '127.0.0.1';
+  const isV6 = ip.includes(':');
+  const brd = !isV6 ? ip.split('.').slice(0, 3).join('.') + '.255' : null;
+  const lines = [];
+
+  if (family !== 6) {
+    lines.push('1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000');
+    lines.push('    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00');
+    lines.push('    inet 127.0.0.1/8 scope host lo');
+    lines.push('       valid_lft forever preferred_lft forever');
+    if (!isV6) {
+      lines.push('2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000');
+      lines.push('    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff');
+      lines.push(`    inet ${ip}/24 brd ${brd} scope global dynamic eth0`);
+      lines.push('       valid_lft forever preferred_lft forever');
+    }
+  }
+
+  if (family !== 4) {
+    if (family === 6) {
+      lines.push('1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000');
+      lines.push('    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00');
+      lines.push('    inet6 ::1/128 scope host');
+      lines.push('       valid_lft forever preferred_lft forever');
+    } else {
+      lines.push('    inet6 ::1/128 scope host');
+      lines.push('       valid_lft forever preferred_lft forever');
+    }
+    if (isV6) {
+      if (family !== 6) {
+        lines.push('2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000');
+        lines.push('    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff');
+      }
+      lines.push(`    inet6 ${ip}/64 scope global dynamic mngtmpaddr`);
+      lines.push('       valid_lft forever preferred_lft forever');
+    }
+  }
+
+  return lines.join('\n');
+}
+
+function getFiles() {
+  return {
+    'README':        `This is ${shortHost}.\nThe real hostname is ${shortHost}.\nYou're welcome.`,
+    'hostname.conf': `HOSTNAME=${shortHost}\nFQDN=${shortHost}\n`,
+    'is_this_real':  'yes',
+    '.bash_history': `hostname\nhostname --fqdn\nhostname -i\nip -4 a\nip -6 a\nwhoami\nls\n`,
+  };
+}
 
 const COMMANDS = {
   hostname(args) {
@@ -21,9 +66,20 @@ const COMMANDS = {
     if (args[0] === '--fqdn') return shortHost;
     if (args[0] === '-f')     return shortHost;
     if (args[0] === '-s')     return shortHost.split('.')[0];
-    if (args[0] === '-i')     return 'yes';
+    if (args[0] === '-i')     return userIP || '127.0.0.1';
     if (args[0] === '-A')     return `${shortHost} ${shortHost}`;
     return err(`hostname: unknown option: ${args[0]}`);
+  },
+  ip(args) {
+    const rest = [...args];
+    let family = 0;
+    if (rest[0] === '-4') { family = 4; rest.shift(); }
+    else if (rest[0] === '-6') { family = 6; rest.shift(); }
+    const sub = rest[0];
+    if (!sub || sub === 'a' || sub === 'addr' || sub === 'address') {
+      return buildIpAddr(family);
+    }
+    return err(`ip: unknown object "${sub}"\nTry "ip help".`);
   },
   whoami()   { return 'you'; },
   pwd()      { return '/home/you'; },
@@ -38,6 +94,7 @@ const COMMANDS = {
     return [
       'available commands:',
       '  hostname [-s|-i|-f|--fqdn|-A]',
+      '  ip [-4|-6] [a|addr]',
       '  whoami, id, pwd, uname [-a]',
       '  ls, cat <file>',
       '  echo, clear, exit',
@@ -45,14 +102,16 @@ const COMMANDS = {
     ].join('\n');
   },
   ls(args) {
+    const files = getFiles();
     const all = args.includes('-a') || args.includes('-la') || args.includes('-al');
-    const keys = Object.keys(FILES).filter(k => all || !k.startsWith('.'));
+    const keys = Object.keys(files).filter(k => all || !k.startsWith('.'));
     return keys.join('  ');
   },
   cat(args) {
     if (!args.length) return err('cat: missing operand');
     const name = args[0];
-    if (FILES[name] !== undefined) return FILES[name];
+    const files = getFiles();
+    if (files[name] !== undefined) return files[name];
     return err(`cat: ${name}: No such file or directory`);
   },
   sudo(args) {
@@ -164,7 +223,6 @@ document.getElementById('btn-maximise').addEventListener('click', e => {
 });
 
 document.addEventListener('click', () => input.focus());
-input.focus();
 
 input.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
@@ -204,9 +262,21 @@ input.addEventListener('input', () => {
   renderInputLine(input.value);
 });
 
-appendLine(`<span class="output-color">Last login: ${new Date().toLocaleString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short', hour12: false })} on ttys000</span>`);
-appendLine('');
-appendLine(`<span class="output-color">Welcome to ${shortHost}.</span>`);
-appendLine(`<span class="prompt-color">Try: <span class="cmd-color">hostname</span>, <span class="cmd-color">whoami</span>, <span class="cmd-color">ls</span>, <span class="cmd-color">cat README</span>. Type <span class="cmd-color">help</span> for more.</span>`);
-appendLine('');
-renderInputLine();
+function init() {
+  input.focus();
+  appendLine(`<span class="output-color">Last login: ${new Date().toLocaleString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short', hour12: false })} on ttys000</span>`);
+  appendLine('');
+  appendLine(`<span class="output-color">Welcome to ${shortHost}.</span>`);
+  appendLine(`<span class="prompt-color">Try: <span class="cmd-color">hostname -i</span>, <span class="cmd-color">ip -4 a</span>, <span class="cmd-color">ls</span>, <span class="cmd-color">cat README</span>. Type <span class="cmd-color">help</span> for more.</span>`);
+  appendLine('');
+  renderInputLine();
+}
+
+fetch(`https://ip.${shortHost}/cdn-cgi/trace`)
+  .then(r => r.text())
+  .then(text => {
+    const m = text.match(/^ip=(.+)$/m);
+    userIP = m ? m[1].trim() : null;
+  })
+  .catch(() => {})
+  .finally(init);

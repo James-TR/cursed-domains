@@ -1,4 +1,4 @@
-$.get('https://ip.youhacked.me/cdn-cgi/trace', function(data) {
+$.get('/cdn-cgi/trace', function(data) {
   // Convert key-value pairs to JSON
   // https://stackoverflow.com/a/39284735/452587
   data = data.trim().split('\n').reduce(function(obj, pair) {
