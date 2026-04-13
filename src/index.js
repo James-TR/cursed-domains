@@ -11,10 +11,16 @@ const ROUTES = {
   "www.realhostna.me": "realhost",
 };
 
+const SITES = new Set(Object.values(ROUTES));
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const site = ROUTES[url.hostname];
+    const isPreview = url.hostname.endsWith('.workers.dev');
+    const siteParam = isPreview && SITES.has(url.searchParams.get('site'))
+      ? url.searchParams.get('site')
+      : null;
+    const site = siteParam ?? ROUTES[url.hostname] ?? (isPreview ? 'realhost' : null);
 
     if (url.pathname === '/youare') {
       const ip = request.headers.get('CF-Connecting-IP') ?? '';
@@ -46,6 +52,7 @@ export default {
       return new Response("Not found", { status: 404 });
     }
 
+    url.searchParams.delete('site');
     url.pathname = `/${site}${url.pathname}`;
     return env.ASSETS.fetch(new Request(url, request));
   },

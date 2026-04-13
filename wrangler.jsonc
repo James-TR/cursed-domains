@@ -17,6 +17,7 @@
       "head_sampling_rate": 1
     }
   },
+  "workers_dev": true,
   "main": "src/index.js",
   "assets": {
     "directory": "public",
