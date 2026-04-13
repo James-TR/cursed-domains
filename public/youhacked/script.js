@@ -1,17 +1,11 @@
-$.get('/cdn-cgi/trace', function(data) {
-  // Convert key-value pairs to JSON
-  // https://stackoverflow.com/a/39284735/452587
-  data = data.trim().split('\n').reduce(function(obj, pair) {
-    pair = pair.split('=');
-	return obj[pair[0]] = pair[1], obj;
-  }, {});
-  
+$.get('/youare', function(ip) {
+  ip = ip.trim();
   (function titleScroller(text) {
     document.title = text;
     setTimeout(function () {
         titleScroller(text.slice(1) + text.slice(0, 1));
     }, 500);
-}( document.title + " - I know your IP address - " + data.ip + " - You can't hide forever - "));
+}( document.title + " - I know your IP address - " + ip + " - You can't hide forever - "));
 });
 
 const canvas = document.getElementById('canvas1');

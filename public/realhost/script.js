@@ -272,11 +272,8 @@ function init() {
   renderInputLine();
 }
 
-fetch(`https://ip.${shortHost}/cdn-cgi/trace`)
+fetch('/whoami')
   .then(r => r.text())
-  .then(text => {
-    const m = text.match(/^ip=(.+)$/m);
-    userIP = m ? m[1].trim() : null;
-  })
+  .then(text => { userIP = text.trim() || null; })
   .catch(() => {})
   .finally(init);

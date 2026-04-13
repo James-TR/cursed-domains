@@ -16,9 +16,9 @@ export default {
     const url = new URL(request.url);
     const site = ROUTES[url.hostname];
 
-    if (url.pathname === '/cdn-cgi/trace') {
+    if (url.pathname === '/youare' || url.pathname === '/whoami') {
       const ip = request.headers.get('CF-Connecting-IP') ?? '';
-      return new Response(`ip=${ip}\n`);
+      return new Response(ip);
     }
 
     if (!site) {
