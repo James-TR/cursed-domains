@@ -7,10 +7,12 @@ const shortHost = host.replace(/^www\./, '');
 
 let history = [];
 let historyIndex = -1;
-let userIP = null;
+let userData = {};
+
+function getIP() { return userData.ip || '127.0.0.1'; }
 
 function buildIpAddr(family) {
-  const ip = userIP || '127.0.0.1';
+  const ip = getIP();
   const isV6 = ip.includes(':');
   const brd = !isV6 ? ip.split('.').slice(0, 3).join('.') + '.255' : null;
   const lines = [];
@@ -52,11 +54,31 @@ function buildIpAddr(family) {
 }
 
 function getFiles() {
+  const d = userData;
   return {
     'README':        `This is ${shortHost}.\nThe real hostname is ${shortHost}.\nYou're welcome.`,
-    'hostname.conf': `HOSTNAME=${shortHost}\nFQDN=${shortHost}\n`,
+    'hostname.conf': [
+      `HOSTNAME=${shortHost}`,
+      `FQDN=${shortHost}`,
+      `COUNTRY=${d.country ?? ''}`,
+      `TIMEZONE=${d.timezone ?? ''}`,
+    ].join('\n') + '\n',
+    'network.conf': [
+      `IP=${d.ip ?? ''}`,
+      `ASN=AS${d.asn ?? ''}`,
+      `ISP=${d.asOrganization ?? ''}`,
+      `DATACENTER=${d.colo ?? ''}`,
+      `PROTOCOL=${d.httpProtocol ?? ''}`,
+      `TLS=${d.tlsVersion ?? ''}`,
+      `CIPHER=${d.tlsCipher ?? ''}`,
+      `CITY=${d.city ?? ''}`,
+      `REGION=${d.region ?? ''} (${d.regionCode ?? ''})`,
+      `POSTAL=${d.postalCode ?? ''}`,
+      `LAT=${d.latitude ?? ''}`,
+      `LON=${d.longitude ?? ''}`,
+    ].join('\n') + '\n',
     'is_this_real':  'yes',
-    '.bash_history': `hostname\nhostname --fqdn\nhostname -i\nip -4 a\nip -6 a\nwhoami\nls\n`,
+    '.bash_history': `hostname\nhostname --fqdn\nhostname -i\nip -4 a\nip -6 a\ncat network.conf\nwhoami\nls\n`,
   };
 }
 
@@ -66,7 +88,7 @@ const COMMANDS = {
     if (args[0] === '--fqdn') return shortHost;
     if (args[0] === '-f')     return shortHost;
     if (args[0] === '-s')     return shortHost.split('.')[0];
-    if (args[0] === '-i')     return userIP || '127.0.0.1';
+    if (args[0] === '-i')     return getIP();
     if (args[0] === '-A')     return `${shortHost} ${shortHost}`;
     return err(`hostname: unknown option: ${args[0]}`);
   },
@@ -85,7 +107,8 @@ const COMMANDS = {
   pwd()      { return '/home/you'; },
   id()       { return `uid=1000(you) gid=1000(you) groups=1000(you)`; },
   uname(args) {
-    if (args[0] === '-a') return `Linux ${shortHost} 6.1.0-cursed #1 SMP PREEMPT x86_64 GNU/Linux`;
+    const node = userData.colo ? `${userData.colo.toLowerCase()}-edge` : shortHost;
+    if (args[0] === '-a') return `Linux ${node} 6.1.0-cursed #1 SMP PREEMPT x86_64 GNU/Linux`;
     return 'Linux';
   },
   echo(args)  { return args.join(' '); },
@@ -273,7 +296,7 @@ function init() {
 }
 
 fetch('/whoami')
-  .then(r => r.text())
-  .then(text => { userIP = text.trim() || null; })
+  .then(r => r.json())
+  .then(data => { userData = data; })
   .catch(() => {})
   .finally(init);
