@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="4" fill="#000"/>
+  <!-- hooded figure -->
+  <circle cx="16" cy="12" r="9" fill="#0f0"/>
+  <path d="M8 20 L6 31 L26 31 L24 20 Q20 17 16 17 Q12 17 8 20Z" fill="#0f0"/>
+  <!-- face shadow -->
+  <ellipse cx="16" cy="13" rx="4" ry="5" fill="#000"/>
+</svg>
