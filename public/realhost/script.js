@@ -270,6 +270,36 @@ input.addEventListener('keydown', e => {
       input.value = '';
       renderInputLine('');
     }
+  } else if (e.key === 'Tab') {
+    e.preventDefault();
+    e.stopPropagation();
+    const val = input.value;
+    const parts = val.split(/\s+/);
+
+    if (parts.length === 1) {
+      const prefix = parts[0];
+      const matches = Object.keys(COMMANDS).filter(c => c.startsWith(prefix));
+      if (matches.length === 1) {
+        input.value = matches[0] + ' ';
+        renderInputLine(input.value);
+      } else if (matches.length > 1) {
+        appendLine(`<span class="output-color">${matches.join('  ')}</span>`);
+        renderInputLine(val);
+      }
+    } else {
+      const prefix = parts[parts.length - 1];
+      const files = getFiles();
+      const matches = Object.keys(files).filter(f => f.startsWith(prefix));
+      if (matches.length === 1) {
+        parts[parts.length - 1] = matches[0];
+        input.value = parts.join(' ');
+        renderInputLine(input.value);
+      } else if (matches.length > 1) {
+        appendLine(`<span class="output-color">${matches.join('  ')}</span>`);
+        renderInputLine(val);
+      }
+    }
+    input.focus();
   } else if (e.key === 'l' && e.ctrlKey) {
     e.preventDefault();
     output.innerHTML = '';

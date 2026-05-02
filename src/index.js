@@ -17,10 +17,6 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const isPreview = url.hostname.endsWith('.workers.dev');
-    const siteParam = isPreview && SITES.has(url.searchParams.get('site'))
-      ? url.searchParams.get('site')
-      : null;
-    const site = siteParam ?? ROUTES[url.hostname] ?? (isPreview ? 'realhost' : null);
 
     if (url.pathname === '/youare') {
       const ip = request.headers.get('CF-Connecting-IP') ?? '';
@@ -48,11 +44,30 @@ export default {
       }), { headers: { 'Content-Type': 'application/json' } });
     }
 
-    if (!site) {
-      return new Response("Not found", { status: 404 });
+    if (isPreview) {
+      // ?site=X redirect to path-based URL so sub-resources inherit routing
+      const siteParam = url.searchParams.get('site');
+      if (siteParam && SITES.has(siteParam)) {
+        const dest = siteParam !== 'realhost' ? `${url.origin}/${siteParam}/` : `${url.origin}/`;
+        return Response.redirect(dest, 302);
+      }
+
+      // Path-prefix routing: /fornoreason/* and /youhacked/* → respective sites
+      const segments = url.pathname.split('/').filter(Boolean);
+      if (segments.length > 0 && SITES.has(segments[0]) && segments[0] !== 'realhost') {
+        const site = segments[0];
+        const innerPath = segments.length > 1 ? '/' + segments.slice(1).join('/') : '/';
+        url.pathname = `/${site}${innerPath}`;
+        return env.ASSETS.fetch(new Request(url, request));
+      }
+
+      // Default to realhost
+      url.pathname = `/realhost${url.pathname}`;
+      return env.ASSETS.fetch(new Request(url, request));
     }
 
-    url.searchParams.delete('site');
+    const site = ROUTES[url.hostname];
+    if (!site) return new Response("Not found", { status: 404 });
     url.pathname = `/${site}${url.pathname}`;
     return env.ASSETS.fetch(new Request(url, request));
   },

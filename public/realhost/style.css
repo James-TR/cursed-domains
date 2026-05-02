@@ -73,16 +73,9 @@ body {
 .output-color { color: #33ff33; }
 .err-color    { color: #ff5f57; }
 
-.input-line {
-  display: flex;
-  align-items: baseline;
-}
-
 .input-line .ghost {
   color: #fff;
-  flex: 1;
   white-space: pre;
-  overflow: hidden;
 }
 
 .cursor {
