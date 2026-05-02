@@ -13,6 +13,12 @@ document.addEventListener('keydown', e => {
   }
 });
 
+setTimeout(() => {
+  const hint = document.getElementById('hint');
+  hint.classList.add('visible');
+  setTimeout(() => hint.classList.remove('visible'), 5000);
+}, 30000);
+
 function reveal() {
   document.getElementById('spinner').style.display = 'none';
   document.getElementById('message').style.display = 'none';

@@ -72,6 +72,19 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.hint {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+}
+.hint.visible { opacity: 0.18; }
+
 .gh-link {
   position: fixed;
   bottom: 1.25rem;
