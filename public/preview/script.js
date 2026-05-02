@@ -107,6 +107,9 @@ function run(raw) {
     case 'clear':
       output.innerHTML = '';
       break;
+    case 'exit':
+      appendOutput('logout\nThere is no outside.');
+      break;
     case 'whoami':
       appendOutput('you');
       break;
@@ -119,6 +122,27 @@ function run(raw) {
 
   renderInputLine();
 }
+
+document.getElementById('btn-close').addEventListener('click', e => {
+  e.stopPropagation();
+  run('exit');
+});
+
+document.getElementById('btn-minimise').addEventListener('click', e => {
+  e.stopPropagation();
+  const terminal = document.getElementById('terminal');
+  terminal.classList.add('minimised');
+  setTimeout(() => terminal.classList.remove('minimised'), 1200);
+});
+
+document.getElementById('btn-maximise').addEventListener('click', e => {
+  e.stopPropagation();
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  } else {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+});
 
 document.addEventListener('click', () => input.focus());
 
