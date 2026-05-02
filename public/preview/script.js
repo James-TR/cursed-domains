@@ -206,7 +206,7 @@ function init() {
   appendLine(`<span class="output-color">Last login: ${new Date().toLocaleString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short', hour12: false })} on ttys000</span>`);
   appendLine('');
   appendLine(`<span class="output-color">Welcome to ${escHtml(host)}.</span>`);
-  appendLine(`<span class="prompt-color">this is a preview deployment. these are the sites:</span>`);
+  appendLine(`<span class="prompt-color">Try: <span class="cmd-color">ls</span>, <span class="cmd-color">cd &lt;site&gt;</span>, <span class="cmd-color">help</span>. This is a preview deployment.</span>`);
   appendLine('');
   lsOutput();
   appendLine('');
