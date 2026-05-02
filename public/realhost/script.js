@@ -272,6 +272,7 @@ input.addEventListener('keydown', e => {
     }
   } else if (e.key === 'Tab') {
     e.preventDefault();
+    e.stopPropagation();
     const val = input.value;
     const parts = val.split(/\s+/);
 
@@ -298,6 +299,7 @@ input.addEventListener('keydown', e => {
         renderInputLine(val);
       }
     }
+    input.focus();
   } else if (e.key === 'l' && e.ctrlKey) {
     e.preventDefault();
     output.innerHTML = '';
