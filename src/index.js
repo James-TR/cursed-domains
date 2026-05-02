@@ -48,20 +48,25 @@ export default {
       // ?site=X redirect to path-based URL so sub-resources inherit routing
       const siteParam = url.searchParams.get('site');
       if (siteParam && SITES.has(siteParam)) {
-        const dest = siteParam !== 'realhost' ? `${url.origin}/${siteParam}/` : `${url.origin}/`;
-        return Response.redirect(dest, 302);
+        return Response.redirect(`${url.origin}/${siteParam}/`, 302);
       }
 
-      // Path-prefix routing: /fornoreason/* and /youhacked/* → respective sites
+      // Path-prefix routing: known sites and preview index
       const segments = url.pathname.split('/').filter(Boolean);
-      if (segments.length > 0 && SITES.has(segments[0]) && segments[0] !== 'realhost') {
+      if (segments.length > 0 && (SITES.has(segments[0]) || segments[0] === 'preview')) {
         const site = segments[0];
         const innerPath = segments.length > 1 ? '/' + segments.slice(1).join('/') : '/';
         url.pathname = `/${site}${innerPath}`;
         return env.ASSETS.fetch(new Request(url, request));
       }
 
-      // Default to realhost
+      // Root -> preview index
+      if (url.pathname === '/') {
+        url.pathname = '/preview/';
+        return env.ASSETS.fetch(new Request(url, request));
+      }
+
+      // Fallback
       url.pathname = `/realhost${url.pathname}`;
       return env.ASSETS.fetch(new Request(url, request));
     }
