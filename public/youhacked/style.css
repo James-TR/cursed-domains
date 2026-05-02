@@ -50,3 +50,16 @@ body {
     cursor: pointer;
     user-select: none;
 }
+
+.gh-link {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  width: 24px;
+  height: 24px;
+  opacity: 0.12;
+  transition: opacity 0.4s ease;
+  color: #0f0;
+}
+.gh-link:hover { opacity: 0.65; }
+.gh-link svg { width: 100%; height: 100%; fill: currentColor; }
