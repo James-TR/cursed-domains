@@ -60,10 +60,9 @@ export default {
         return env.ASSETS.fetch(new Request(url, request));
       }
 
-      // Root -> preview index
+      // Root -> redirect to preview index so sub-resources resolve correctly
       if (url.pathname === '/') {
-        url.pathname = '/preview/';
-        return env.ASSETS.fetch(new Request(url, request));
+        return Response.redirect(`${url.origin}/preview/`, 302);
       }
 
       // Fallback
