@@ -25,6 +25,6 @@ The workers.dev deployment is at [cursed-domains.jamestk-cloudflare.workers.dev]
 
 Branches and commits also get preview deployments:
 - Branch: `https://feature-branch-name-cursed-domains.jamestk-cloudflare.workers.dev/`
-- Commit: `https://{commit-hash}-cursed-domains.jamestk-cloudflare.workers.dev/`
+- Commit: `https://{short-hash}-cursed-domains.jamestk-cloudflare.workers.dev/`
 
 Preview a specific site on any workers.dev URL with `?site=fornoreason`, `?site=youhacked`, or `?site=realhost`.
